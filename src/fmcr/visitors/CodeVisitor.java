@@ -2,21 +2,26 @@ package fmcr.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import fmcr.factory.CodeAnalysisFactory;
 import fmcr.main.Client;
 import fmcr.util.Report;
 import fmcr.util.ReportTag;
+import fmcr.util.Variable;
 
 /**
  * A visitor that traverse an AST to extract its program properties
  *
- * @author <STUDENT NAME, REGISTRATION NUMBER>
+ * @author <Nestor Skiadas, 2258257>
  * @version 1.0
  * 
  * @see     fmcr.visitors.InitVisitor
@@ -40,12 +45,19 @@ public class CodeVisitor extends VoidVisitorAdapter<Void>{
 		/*
 		 * Q1a: Populate fr with all the field variables (0.5 mark).
 		 */
-
 		
+		for (VariableDeclarator v : fd.getVariables()) {
+			Variable var = new Variable(v.getNameAsString(), v.getType().toString());
+			fr.addVariable(var);
+		}
 		
 		/*
 		 * Q1b: Populate fr with all the field modifiers (0.5 mark).
 		 */
+		for(Modifier md : fd.getModifiers()) {
+			fr.addModifier(md.toString());
+		}
+		
 
 		
 		
@@ -53,6 +65,7 @@ public class CodeVisitor extends VoidVisitorAdapter<Void>{
 		 * Q1c: Retrieve the line position of the field in the source code, 
 		 * then use the result to call setLine() method on fr (1 mark).
 		 */
+		fr.setLine(fd.getBegin().get().line);
 
 		
 		
@@ -61,7 +74,7 @@ public class CodeVisitor extends VoidVisitorAdapter<Void>{
 		 * should take boolean value true only when the field is non-private
 		 * and non-final, otherwise a parameter value should be false (1 mark).
 		 */
-
+		fr.setInappropriateAccessLevel(!fd.getModifiers().contains(Modifier.PRIVATE) && !fd.getModifiers().contains(Modifier.FINAL));
 		
 		
 		/*
@@ -69,6 +82,7 @@ public class CodeVisitor extends VoidVisitorAdapter<Void>{
 		 * value  true only when the field has a Javadoc comment, otherwise a
 		 * parameter value should be false (1 mark).
 		 */
+		fr.setDocumented(!fd.getJavadoc().equals(null));
 
 		
 		
