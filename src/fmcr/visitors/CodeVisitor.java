@@ -104,6 +104,7 @@ public class CodeVisitor extends VoidVisitorAdapter<Void>{
 		 * Q2a: Call setMethodName() method in mr. The method should
 		 * take as parameter the name of the method declaration (0.5 mark).
 		 */
+		mr.setMethodName(md.getNameAsString());
 		
 		
 		/*
